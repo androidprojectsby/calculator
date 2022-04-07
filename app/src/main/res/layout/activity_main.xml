@@ -47,12 +47,13 @@
 
             <Button
                 android:id="@+id/onechar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:height="60dp"
+                android:height="80dp"
                 android:foregroundGravity="center"
                 android:gravity="center"
+                app:cornerRadius="100dp"
                 app:icon="@android:drawable/ic_input_delete"
                 app:iconGravity="start"
                 app:iconPadding="10dp"

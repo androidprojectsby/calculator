@@ -33,18 +33,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else if(position==exp.length()){
                         if(exp.charAt(position-1) !='+' &&exp.charAt(position-1) !='-' &&exp.charAt(position-1) !='x' &&exp.charAt(position-1) !='/' &&
-                                exp.charAt(position-1) !='%' &&exp.charAt(position-1) !='.' &&exp.charAt(position-1) !='(' &&exp.charAt(position-1) !=')' )
+                                exp.charAt(position-1) !='%' &&exp.charAt(position-1) !='.')
                             return true;
                     }
-                    else {
-                        if(exp.charAt(position) !='+' &&exp.charAt(position) !='-' &&exp.charAt(position) !='x' &&exp.charAt(position) !='/' &&
-                                exp.charAt(position) !='%' &&exp.charAt(position) !='.' &&exp.charAt(position) !='(' &&exp.charAt(position) !=')' )
-                        {
-                            if(exp.charAt(position-1) !='+' && exp.charAt(position-1) !='-' && exp.charAt(position-1) !='x' &&exp.charAt(position-1) !='/' &&
-                                    exp.charAt(position-1) !='%' &&exp.charAt(position-1) !='.' &&exp.charAt(position-1) !='(' &&exp.charAt(position-1) !=')' )
-                                return true;
-                        }
-                    }
+
                     return false;
     }
     static double operation(char op,double a,double b){
@@ -360,7 +352,7 @@ public class MainActivity extends AppCompatActivity {
                 if(t.getText().toString().length()>0) {
                     String text = t.getText().toString();
                     int position = t.getSelectionStart();
-                    Toast.makeText(getApplicationContext(), String.valueOf(position), Toast.LENGTH_LONG).show();
+                   // Toast.makeText(getApplicationContext(), String.valueOf(position), Toast.LENGTH_LONG).show();
                     if(position>0) {
 
                         String ans = text.substring(0, position - 1) + text.substring(position);
