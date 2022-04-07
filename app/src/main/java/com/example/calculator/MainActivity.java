@@ -30,14 +30,18 @@ public class MainActivity extends AppCompatActivity {
                         if(exp.charAt(position) !='+' &&exp.charAt(position) !='-' &&exp.charAt(position) !='x' &&exp.charAt(position) !='/' &&
                                 exp.charAt(position) !='%' &&exp.charAt(position) !='.' &&exp.charAt(position) !='(' &&exp.charAt(position) !=')' )
                             return true;
+                        else
+                            return false;
                     }
                     else if(position==exp.length()){
                         if(exp.charAt(position-1) !='+' &&exp.charAt(position-1) !='-' &&exp.charAt(position-1) !='x' &&exp.charAt(position-1) !='/' &&
                                 exp.charAt(position-1) !='%' &&exp.charAt(position-1) !='.')
                             return true;
+                        else
+                            return false;
                     }
 
-                    return false;
+                    return true;
     }
     static double operation(char op,double a,double b){
         switch(op){
