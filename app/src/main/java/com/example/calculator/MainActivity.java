@@ -9,102 +9,42 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
+
 import java.util.Stack;
+import java.util.StringTokenizer;
 
 public class MainActivity extends AppCompatActivity {
-    static int priority(char ch){
-        if(ch=='(')
-            return 4;
-        if(ch=='^')
-            return 3;
-        if(ch=='*' || ch=='/' || ch=='%')
-            return 2;
-        if(ch=='+'|| ch=='-')
-            return 1;
-        return 0;
-    }
-    static boolean canoperator(int position,String exp){
-                    if(position==0 && exp.length()==0)
-                        return false;
-                    if(position==0){
-                        if(exp.charAt(position) !='+' &&exp.charAt(position) !='-' &&exp.charAt(position) !='x' &&exp.charAt(position) !='/' &&
-                                exp.charAt(position) !='%' &&exp.charAt(position) !='.' &&exp.charAt(position) !='(' &&exp.charAt(position) !=')' )
-                            return true;
-                        else
-                            return false;
-                    }
-                    else if(position==exp.length()){
-                        if(exp.charAt(position-1) !='+' &&exp.charAt(position-1) !='-' &&exp.charAt(position-1) !='x' &&exp.charAt(position-1) !='/' &&
-                                exp.charAt(position-1) !='%' &&exp.charAt(position-1) !='.')
-                            return true;
-                        else
-                            return false;
-                    }
-
-                    return true;
-    }
-    static double operation(char op,double a,double b){
-        switch(op){
-            case '+':
-                return b+a;
-            case '-':
-                return b-a;
-            case '*':
-                return b*a;
-            case '/':
-                return b/a;
-            case '%':
-                return b%a;
-            case '^':
-                return Math.pow(b,a);
-        }
-        return -1.0;
-    }
-    static double eval(String var){
-        Stack<Character> operator =new Stack<Character>();
-        Stack<Double> value=new Stack<Double>();
-        int i;
-        for(i=0;i<var.length();i++){
-            if(var.charAt(i)>='0' && var.charAt(i)<='9'){
-                String data="";
-                while(i<var.length() && ((var.charAt(i)>='0' && var.charAt(i)<='9')||var.charAt(i)=='.')){
-
-                    data+=String.valueOf(var.charAt(i));
-                    i++;
-                }
-                value.push(Double.parseDouble(data));
-            }
-            if(i<var.length()){
-                char ch=var.charAt(i);
-                if(ch=='(')
-                    operator.push(var.charAt(i));
-                if(ch==')'){
-                    while(operator.peek()!='(')
-                        value.push(operation(operator.pop(),value.pop(),value.pop()));
-                    operator.pop();
-                }
-                if(ch=='+' || ch=='-' || ch=='*' || ch=='/' || ch=='^'|| ch=='%'){
-                    if(operator.empty()==true || operator.peek()=='(' || priority(operator.peek())<priority(var.charAt(i)))
-                        operator.push(var.charAt(i));
-                    else{
-                        while(operator.empty()!=true && priority(operator.peek())>=priority(var.charAt(i))){
-
-                            char c=operator.pop();
-
-                            value.push(operation(c,value.pop(),value.pop()));
-                        }
-                        operator.push(var.charAt(i));
-                    }
-                }
-            }
-        }
-        while(operator.empty()==false)
-            value.push(operation(operator.pop(),value.pop(),value.pop()));
-        return value.pop();
+    double prevans=0.0;
+ boolean canoperator(int position,String exp,char op){
+ if(position !=0 && position==exp.length()) {
+     if (exp.charAt(position - 1) != '+' && exp.charAt(position - 1) != '-' && exp.charAt(position - 1) != 'x' && exp.charAt(position - 1) != '/' &&
+             exp.charAt(position - 1) != '%' && exp.charAt(position - 1) != '.')
+         return true;
+     else
+         return false;
+ }
+     exp=exp.substring(0,position)+String.valueOf(op)+exp.substring(position);
+     for(int i=1;i<exp.length();i++){
+         if((exp.charAt(i)=='+' || exp.charAt(i)=='-') &&(exp.charAt(i)==exp.charAt(i-1) || (exp.charAt(i)=='+'  && exp.charAt(i-1)=='-') || (exp.charAt(i)=='-'  && exp.charAt(i-1)=='+')))
+             return false;
+     }
+     boolean flag=false;
+     try{
+         Expression expression = new ExpressionBuilder(exp.replace('x','*')).build();
+         double result = expression.evaluate();
+         flag=true;
+     }
+     catch(Exception e){
+     }
+     if(flag==true)
+         return true;
+     return false;
     }
     EditText t;
     TextView v;
-    Button b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13,b14,b15,b16,b17,b18,b19,b20,b21;
+    Button b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13,b14,b15,b16,b17,b18,b19,b20,b21,b22;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         b21=findViewById(R.id.onechar);
         t=findViewById(R.id.editTextTextPersonName);
         v=findViewById(R.id.textView5);
+        b22=findViewById(R.id.ans);
         t.setShowSoftInputOnFocus(false);
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -245,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String text=t.getText().toString();
                 int position=t.getSelectionStart();
-                if(canoperator(position, text)) {
+                if(canoperator(position, text,'+')) {
                     String ans = text.substring(0, position) + "+" + text.substring(position);
                     t.setText(ans);
                     t.setSelection(position + 1);
@@ -257,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String text=t.getText().toString();
                 int position=t.getSelectionStart();
-                if(canoperator(position, text)) {
+                if(canoperator(position, text,'-')) {
                     String ans = text.substring(0, position) + "-" + text.substring(position);
                     t.setText(ans);
                     t.setSelection(position + 1);
@@ -269,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String text=t.getText().toString();
                 int position=t.getSelectionStart();
-                if(canoperator(position, text)) {
+                if(canoperator(position, text,'x')) {
                     String ans = text.substring(0, position) + "x" + text.substring(position);
                     t.setText(ans);
                     t.setSelection(position + 1);
@@ -281,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String text=t.getText().toString();
                 int position=t.getSelectionStart();
-                if(canoperator(position, text)) {
+                if(canoperator(position, text,'/')) {
                     String ans = text.substring(0, position) + "/" + text.substring(position);
                     t.setText(ans);
                     t.setSelection(position + 1);
@@ -292,7 +233,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try{
-                    v.setText(String.valueOf(eval(t.getText().toString().replace('x', '*'))));
+                    Expression expression = new ExpressionBuilder(t.getText().toString().replace('x', '*')).build();
+                    double result = expression.evaluate();
+                    v.setText(String.valueOf(result));
                 }
                 catch (Exception e){
                     Toast.makeText(getApplicationContext(),"wrong expression", Toast.LENGTH_SHORT).show();
@@ -305,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String text=t.getText().toString();
                 int position=t.getSelectionStart();
-                if(canoperator(position, text)) {
+                if(canoperator(position, text,'%')) {
                     String ans = text.substring(0, position) + "%" + text.substring(position);
                     t.setText(ans);
                     t.setSelection(position + 1);
@@ -342,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String text=t.getText().toString();
                 int position=t.getSelectionStart();
-                if(canoperator(position, text)) {
+                if(canoperator(position, text, '.')) {
                 String ans = text.substring(0, position) + "." + text.substring(position);
                     t.setText(ans);
                     t.setSelection(position + 1);
@@ -364,6 +307,17 @@ public class MainActivity extends AppCompatActivity {
                         t.setSelection(position - 1);
                     }
                 }
+            }
+        });
+
+        b22.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String text=t.getText().toString();
+                int position=t.getSelectionStart();
+                String ans=text.substring(0, position)+prevans+text.substring(position);
+                t.setText(ans);
+                t.setSelection(position+String.valueOf(prevans).length());
             }
         });
     }
